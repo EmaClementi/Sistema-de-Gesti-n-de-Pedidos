@@ -2,16 +2,28 @@
 class Pedido{
     private $id_pedido;
     private $id_cliente;
-    private $menu_plato;
+    private $platos;
     private $fecha;
     private $forma_de_pago;
     
-    public function __construct($id_pedido,Cliente $id_cliente,$fecha,$forma_de_pago){
+    public function __construct($id_pedido,$id_cliente,$fecha,$forma_de_pago){
         $this->id_pedido = $id_pedido;
         $this->id_cliente = $id_cliente;
-        $this->menu_plato = [];
+        $this->platos = [];
         $this->fecha = $fecha;
         $this->forma_de_pago = $forma_de_pago;
+    }
+    public function mostrarPedido(){
+        echo "Datos del Pedido: \n";
+        echo "ID Pedido: \n".$this->id_pedido;
+        echo "ID Cliente: \n".$this->id_cliente;
+        echo "ID Fecha: \n".$this->fecha;
+        echo "ID Forma de Pago: \n".$this->forma_de_pago;
+        echo "Contenido del Pedido: \n";
+        foreach($this->platos as $plato){
+            echo "Plato: ".$plato;
+        }
+
     }
     public function getIdPedido(){
         return $this->id_pedido;
@@ -20,7 +32,7 @@ class Pedido{
         return $this->id_cliente;
     }
     public function getMenuPlatos(){
-        return $this->menu_plato;
+        return $this->platos;
     }
     public function getFecha(){
         return $this->fecha;
@@ -28,8 +40,8 @@ class Pedido{
     public function getFormaDePago(){
         return $this->forma_de_pago;
     }
-    public function setMenuPlato($menu_plato){
-        $this->menu_plato = $menu_plato;
+    public function agregarPlato($plato){
+        $this->platos[] = $plato;
     }
     public function setFecha($fecha){
         $this->fecha = $fecha;
