@@ -1,9 +1,9 @@
 <?php
 
 class Plato{
-    private $id_plato;
-    private $nombre;
-    private $descripcion;
+    public $id_plato;
+    public $nombre;
+    public $descripcion;
     
     public function __construct($id_plato,$nombre,$descripcion){
         $this->id_plato = $id_plato;

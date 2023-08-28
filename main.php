@@ -10,6 +10,9 @@ echo "========= Bienvenido al Gestor Pedidos/Clientes/Menues ========= \n";
 $nombre = readline("Nombre de la casa de comidas:\n");
 $casaDeComidas = new CasaDeComidas($nombre);
 $casaDeComidas->getNombre();
+$casaDeComidas->leerClientes('clientes.json');
+$casaDeComidas->leerPlatos('platos.json');
+$casaDeComidas->leerPedidos('pedidos.json');
 function menuVisual(){
     echo "\n============ Menu ============\n";
     echo "1- Gestionar Clientes\n";
@@ -64,7 +67,8 @@ function gestionClientes($casaDeComidas){
 function gestionPedidos($casaDeComidas){
     echo "1- Agregar Pedido\n";
     echo "2- Borrar Pedido\n";
-    echo "3- Modificar Pedido\n";
+    echo "3- Modificar Datos del Pedido\n";
+    echo "4- Modificar Contenido del Pedido\n";
     echo "==============================\n";
     $opcionPedidos = readline("Ingrese una opcion: ");
     switch($opcionPedidos){
@@ -75,7 +79,10 @@ function gestionPedidos($casaDeComidas){
             //borrarPedido();
             break;
         case 3:
-            //modificarPedido();
+            modificarDatosPedido($casaDeComidas);
+            break;
+        case 4:
+            modificarContenidoPedido($casaDeComidas);
             break;
         default:
             echo "ERROR: Dato mal Ingresado";
@@ -116,6 +123,7 @@ function agregarCliente($casaDeComidas){
         $telefono = readline("Telefono: ");
         $cliente = new Cliente($id_cliente,$nombre,$apellido,$direccion,$telefono);// Creo el cliente y lo agrego al arreglo de clientes
         $casaDeComidas->agregarCliente($cliente);
+        $casaDeComidas->grabarClientes('clientes.json');
     }     
 }
 function borrarCliente($casaDeComidas){
@@ -123,6 +131,7 @@ function borrarCliente($casaDeComidas){
     $cliente = $casaDeComidas->buscarCliente($id_cliente);
     if(isset($cliente)){
         $casaDeComidas->borrarCliente($cliente);
+        $casaDeComidas->grabarClientes("clientes.json");
     }else{
         echo "El Cliente no Existe\n";
     }
@@ -137,6 +146,7 @@ function modificarCliente($casaDeComidas){
         $direccion = readline("Direccion: ");
         $telefono = readline("Telefono: ");          
         $casaDeComidas->modificarCliente($cliente,$nombre,$apellido,$direccion,$telefono);
+        $casaDeComidas->grabarClientes("clientes.json");
     }else{
         echo "El Cliente no Existe\n";
     }
@@ -149,6 +159,7 @@ function agregarPlato($casaDeComidas){
 
     $plato = new Plato($idMenu,$nombreMenu,$descripcionMenu);
     $casaDeComidas->agregarPlato($plato);
+    $casaDeComidas->grabarPlatos('platos.json');
 
 }
 function borrarPlato($casaDeComidas){
@@ -156,6 +167,7 @@ function borrarPlato($casaDeComidas){
     $plato = $casaDeComidas->buscarPlato($id_plato);
     if(isset($plato)){
         $casaDeComidas->borrarPlato($plato);
+        $casaDeComidas->grabarPlatos('platos.json');
     }else{
         echo "El Menu no Existe\n";
     }
@@ -163,11 +175,12 @@ function borrarPlato($casaDeComidas){
 
 function modificarPlato($casaDeComidas){
     $id_plato = readline("ID Plato a modificar: ");
-    $plato = $casaDeComidas->buscarMenu($id_plato);
+    $plato = $casaDeComidas->buscarPlato($id_plato);
     if(isset($plato)){
         $nombrePlato = readline("Nombre: ");
         $descripcionPlato = readline("Descripcion: ");
         $casaDeComidas->modificarPlato($plato,$nombrePlato,$descripcionPlato);
+        $casaDeComidas->grabarPlatos('platos.json');
     }else{
         echo "El Plato no Existe\n";
     }
@@ -179,20 +192,65 @@ function agregarPedido($casaDeComidas){
         $id_pedido = readline("ID Pedido: ");
         $fecha = readline("Fecha: ");
         $forma_de_pago = readline("Forma de Pago: ");
-        $pedido = new Pedido($id_pedido,$id_cliente,$fecha,$forma_de_pago);
-        $casaDeComidas->mostrarMenus();
-        $id_plato = readline("ID Plato: ");
-        echo "Platos Disponibles: \n";
-        $plato = $casaDeComidas->buscarPlato($id_plato);
-        if(isset($plato)){
-            $pedido->agregarPlato($plato);
-        }else{
-            echo "El Plato no existe\n";
-        }
-
+        echo "==============================\n";
+        echo "Carta de Platos: \n";
+        $platos = agregarPlatoPedido($casaDeComidas);
+        $pedido = new Pedido($id_pedido,$id_cliente,$platos,$fecha,$forma_de_pago);
+        $casaDeComidas->agregarPedido($pedido);
+        $casaDeComidas->grabarPedidos('pedidos.json');
     }else{
         echo "El Cliente no Existe\n";
     }   
 
+}
+function agregarPlatoPedido($casaDeComidas){
+    $casaDeComidas->mostrarPlatos();
+    $opcion = true;
+    while($opcion != 0){
+        $id_plato = readline("ID Plato: ");
+        $plato = $casaDeComidas->buscarPlato($id_plato);
+        $platos = [];
+        if(isset($plato)){
+            $platos = $plato;
+        }else{
+            echo "El Plato no existe\n";
+        }
+        echo "Plato Agregado al Pedido.\n";
+        echo "1- Agregar otro Plato\n";
+        echo "0- Finalizar Pedido\n";
+        echo "==============================\n";
+
+        $opcion = readline("Opcion: ");
+    }
+    return $platos;
+}
+
+function modificarDatosPedido($casaDeComidas){
+    $id_pedido = readline("ID Pedido a modificar: ");
+    $pedido = $casaDeComidas->buscarPedido($id_pedido);
+    if(isset($pedido)){
+        $id_cliente = readline("ID del Cliente: ");
+        $fecha = readline("Fecha: ");
+        $forma_de_pago = readline("Forma de Pago: ");
+        $casaDeComidas->modificarPedido($id_pedido,$id_cliente,$fecha,$forma_de_pago);
+    }else{
+        echo "El Pedido no Existe\n";
+    }
+}
+
+function modificarContenidoPedido($casaDeComidas){
+    $id_pedido = readline("ID Pedido a modificar: ");
+    $pedido = $casaDeComidas->buscarPedido($id_pedido);
+    if(isset($pedido)){
+        $opcion = true;
+        while($opcion !=0){
+            echo "1- Agregar Plato\n";
+            echo "2- Borrar Plato\n";
+            echo "0- Finalizar Modificacion\n";
+        }
+        // $casaDeComidas->modificarPedido($id_pedido,$id_cliente,$fecha,$forma_de_pago);
+    }else{
+        echo "El Plato no Existe\n";
+    }
 }
 

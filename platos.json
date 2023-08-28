@@ -1,0 +1,13 @@
+{"platos" : [{
+    "id_plato": "1",
+    "nombre": "Milanesa Napolitana",
+    "descripcion": "Milanesa a la Napolitana completa con jamon, queso y huevo frito, con guarnicion de papas fritas baston."
+},{
+    "id_plato": "2",
+    "nombre": "Hamburguesa Completa",
+    "descripcion": "Hamburguesa de carne completa, con jamon, queso, huevo, panceta, cebolla caramelizada y chedddar, con guarnicion de papas fritas."
+},{
+    "id_plato": "3",
+    "nombre": "Sorrentinos",
+    "descripcion": "Sorrentinos de Jamon y Queso"
+}]}
