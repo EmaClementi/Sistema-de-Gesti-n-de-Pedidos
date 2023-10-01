@@ -4,15 +4,14 @@ require_once('CasaDeComidas.php');
 require_once('Cliente.php');
 require_once('Plato.php');
 require_once('Pedido.php');
+require_once('Conexion.php');
+require_once('DetallePedido.php');
 
 
 echo "========= Bienvenido al Gestor Pedidos/Clientes/Menues ========= \n";
 $nombre = readline("Nombre de la casa de comidas:\n");
 $casaDeComidas = new CasaDeComidas($nombre);
 $casaDeComidas->getNombre();
-$casaDeComidas->leerClientes('clientes.json');
-$casaDeComidas->leerPlatos('platos.json');
-$casaDeComidas->leerPedidos('pedidos.json');
 function menuVisual(){
     echo "\n============ Menu ============\n";
     echo "1- Gestionar Clientes\n";
@@ -47,6 +46,7 @@ function gestionClientes($casaDeComidas){
     echo "1- Agregar Cliente\n";
     echo "2- Borrar Cliente\n";
     echo "3- Modificar Datos\n";
+    echo "4- Listar Clientes\n";
     echo "==============================\n";
     $opcionClientes = readline("Ingrese una opcion: ");
     switch($opcionClientes){
@@ -59,6 +59,9 @@ function gestionClientes($casaDeComidas){
         case 3:
             modificarCliente($casaDeComidas);
             break;
+        case 4:
+            listarClientes();
+            break;
         default:
             writeln("ERROR: Dato mal Ingresado");
             break;
@@ -69,6 +72,7 @@ function gestionPedidos($casaDeComidas){
     echo "2- Borrar Pedido\n";
     echo "3- Modificar Datos del Pedido\n";
     echo "4- Modificar Contenido del Pedido\n";
+    echo "5- Listar Pedidos\n";
     echo "==============================\n";
     $opcionPedidos = readline("Ingrese una opcion: ");
     switch($opcionPedidos){
@@ -84,6 +88,9 @@ function gestionPedidos($casaDeComidas){
         case 4:
             modificarContenidoPedido($casaDeComidas);
             break;
+        case 5:
+            listarPedidos();
+            break;
         default:
             echo "ERROR: Dato mal Ingresado";
             break;
@@ -93,6 +100,7 @@ function gestionPlatos($casaDeComidas){
     echo "1- Agregar Plato\n";
     echo "2- Borrar Plato\n";
     echo "3- Modificar Plato\n";
+    echo "4- Listar Platos\n";
     echo "==============================\n";
     $opcionPlatos = readline("Ingrese una opcion: ");
     switch($opcionPlatos){
@@ -105,116 +113,164 @@ function gestionPlatos($casaDeComidas){
         case 3:
             modificarPlato($casaDeComidas);
             break;
+        case 4:
+            listarPlatos();
+        break;
         default:
             echo "ERROR: Dato mal Ingresado";
             break;
     }
 }
+function listarClientes() {
+    $todos = Cliente::todos();
+    foreach ($todos as $cliente) {
+        echo ($cliente->id_cliente);    echo ('   '); 
+        echo ($cliente->nombre);echo ('   ');
+        echo ($cliente->apellido);echo ('   ');
+        echo ($cliente->direccion);echo ('   ');
+        echo ($cliente->telefono);
+        echo (PHP_EOL);            
+    }
+}
 function agregarCliente($casaDeComidas){
-    echo "Agregar Cliente \n";
-    $id_cliente = readline("ID Cliente: "); // Pido un ID para el cliente
-    $cliente = $casaDeComidas->buscarCliente($id_cliente); // Busco el cliente, si existe me lo trae, sino retorna null
-    if(isset($cliente)){ //Evaluo si esta el cliente o no, si no esta le sigo pidiendo el resto de los datos
-        echo "El Cliente ya Existe\n";
-    }else{
-        $nombre = readline("Nombre: ");
-        $apellido = readline("Apellido: ");
-        $direccion = readline("Direccion: ");
-        $telefono = readline("Telefono: ");
-        $cliente = new Cliente($id_cliente,$nombre,$apellido,$direccion,$telefono);// Creo el cliente y lo agrego al arreglo de clientes
-        $casaDeComidas->agregarCliente($cliente);
-        $casaDeComidas->grabarClientes('clientes.json');
-    }     
+    $nombre = readline("Nombre: ");
+    $apellido = readline("Apellido: ");
+    $direccion = readline("Direccion: ");
+    $telefono = readline("Telefono: ");
+    $cliente = new Cliente($nombre,$apellido,$direccion,$telefono);// Creo el cliente y lo agrego al arreglo de clientes
+    $cliente->save();
+    $casaDeComidas->agregarCliente($cliente);   
+}
+function insertarClientes($pDO, $casaDeComidas) {
+    $clientes = $casaDeComidas->getClientes();
+
+    foreach ($clientes as $cliente) {
+        $id_cliente = $cliente->getId();
+        $nombre = $cliente->getNombre();
+        $apellido = $cliente->getApellido();
+        $direccion = $cliente->getDireccion();
+        $telefono = $cliente->getTelefono();
+
+        $sql = "insert into cliente (id_cliente, nombre, apellido, direccion, telefono) 
+                values ($id_cliente, '$nombre', $apellido, $direccion, $telefono)";
+        $pDO->query($sql);
+
+        //echo($sql.PHP_EOL);
+
+    }
+
 }
 function borrarCliente($casaDeComidas){
+    listarClientes();
     $id_cliente = readline("ID Cliente a borrar: ");
-    $cliente = $casaDeComidas->buscarCliente($id_cliente);
-    if(isset($cliente)){
-        $casaDeComidas->borrarCliente($cliente);
-        $casaDeComidas->grabarClientes("clientes.json");
-    }else{
-        echo "El Cliente no Existe\n";
-    }
-    
+    $casaDeComidas->borrarCliente($id_cliente);    
 }
 function modificarCliente($casaDeComidas){
+    listarClientes();
     $id_cliente = readline("ID Cliente a modificar: ");
-    $cliente = $casaDeComidas->buscarCliente($id_cliente);
-    if(isset($cliente)){
-        $nombre = readline("Nombre: ");
-        $apellido = readline("Apellido: ");
-        $direccion = readline("Direccion: ");
-        $telefono = readline("Telefono: ");          
-        $casaDeComidas->modificarCliente($cliente,$nombre,$apellido,$direccion,$telefono);
-        $casaDeComidas->grabarClientes("clientes.json");
-    }else{
-        echo "El Cliente no Existe\n";
+
+    $nombre = readline("Nombre: ");
+    $apellido = readline("Apellido: ");
+    $direccion = readline("Direccion: ");
+    $telefono = readline("Telefono: ");          
+    $casaDeComidas->modificarCliente($id_cliente,$nombre,$apellido,$direccion,$telefono);
+}
+function listarPlatos() {
+    $todos = Plato::todos();
+    foreach ($todos as $plato) {
+        echo ($plato->id_plato);    echo ('   '); 
+        echo ($plato->descripcion);echo ('   ');
+        echo (PHP_EOL);            
     }
 }
 function agregarPlato($casaDeComidas){
-    echo "Agregar Platos\n";
-    $idMenu = readline("Id Plato: ");
-    $nombreMenu = readline("Nombre: ");
-    $descripcionMenu = readline("Descripcion: ");
+    $nombre = readline("Nombre del Plato: ");
+    $descripcion = readline("Descripcion: ");
 
-    $plato = new Plato($idMenu,$nombreMenu,$descripcionMenu);
+    $plato = new Plato($nombre,$descripcion);
+    $plato->save();
     $casaDeComidas->agregarPlato($plato);
-    $casaDeComidas->grabarPlatos('platos.json');
+
+}
+function insertarPlatos($pDO, $casaDeComidas) {
+    $platos = $casaDeComidas->getPlatos();
+
+    foreach ($platos as $plato) {
+        $id_plato = $plato->getIdPlato();
+        $nombre = $plato->getNombre();
+        $descripcion = $plato->getDescripcion();
+
+        $sql = "insert into plato (id_plato, nombre, descripcion) 
+                values ($id_plato, '$nombre', '$descripcion')";
+        $pDO->query($sql);
+
+        //echo($sql.PHP_EOL);
+
+    }
 
 }
 function borrarPlato($casaDeComidas){
+    listarPlatos();
     $id_plato = readline("ID Plato a borrar: ");
-    $plato = $casaDeComidas->buscarPlato($id_plato);
-    if(isset($plato)){
-        $casaDeComidas->borrarPlato($plato);
-        $casaDeComidas->grabarPlatos('platos.json');
-    }else{
-        echo "El Menu no Existe\n";
-    }
+    $casaDeComidas->borrarPlato($id_plato);
+
 }
 
 function modificarPlato($casaDeComidas){
+    listarPlatos();
     $id_plato = readline("ID Plato a modificar: ");
-    $plato = $casaDeComidas->buscarPlato($id_plato);
-    if(isset($plato)){
-        $nombrePlato = readline("Nombre: ");
-        $descripcionPlato = readline("Descripcion: ");
-        $casaDeComidas->modificarPlato($plato,$nombrePlato,$descripcionPlato);
-        $casaDeComidas->grabarPlatos('platos.json');
-    }else{
-        echo "El Plato no Existe\n";
+    $nombre = readline("Nombre: ");
+    $descripcion = readline("Descripcion: ");
+    $casaDeComidas->modificarPlato($id_plato,$nombre,$descripcion);
+}
+
+
+function listarPedidos() {
+    $todos = Pedido::todosPedidos();
+    echo "ID Pedido | ID Cliente |    Fecha    | Forma de Pago | Total\n";
+    foreach ($todos as $pedido) {
+        echo ($pedido->id_pedido);    echo ('           '); 
+        echo ($pedido->id_cliente);echo ('             ');
+        echo ($pedido->fecha);echo ('           ');
+        echo ($pedido->forma_de_pago);echo ('          ');
+        echo ($pedido->total);
+        echo (PHP_EOL);            
+    }
+}
+function listarDetallePedido($id_pedido) {
+    $todos = DetallePedido::todosDetallePedido($id_pedido);
+    foreach ($todos as $detalle) {
+        echo ($detalle->id_pedido);    echo ('   '); 
+        echo ($detalle->id_plato);    echo ('   '); 
+        echo ($detalle->cantidad);    echo ('   '); 
+        echo (PHP_EOL);            
     }
 }
 function agregarPedido($casaDeComidas){
-    $id_cliente = readline("Numero de Cliente: ");
-    $cliente = $casaDeComidas->buscarCliente($id_cliente);
-    if(isset($cliente)){ 
-        $id_pedido = readline("ID Pedido: ");
-        $fecha = readline("Fecha: ");
-        $forma_de_pago = readline("Forma de Pago: ");
-        echo "==============================\n";
-        echo "Carta de Platos: \n";
-        $platos = agregarPlatoPedido($casaDeComidas);
-        $pedido = new Pedido($id_pedido,$id_cliente,$platos,$fecha,$forma_de_pago);
-        $casaDeComidas->agregarPedido($pedido);
-        $casaDeComidas->grabarPedidos('pedidos.json');
-    }else{
-        echo "El Cliente no Existe\n";
-    }   
+    listarClientes();
+    $id_cliente = readline("Id de Cliente: ");
+    $fecha = readline("Fecha: ");
+    $forma_de_pago = readline("Forma de Pago: ");
+    $total = 0;
 
+    $pedido = new Pedido($id_cliente,$fecha,$forma_de_pago,$total);
+    $pedido->save();
+    $casaDeComidas->agregarPedido($pedido);
+    agregarPlatoPedido($casaDeComidas,$pedido);
 }
-function agregarPlatoPedido($casaDeComidas){
-    $casaDeComidas->mostrarPlatos();
+function agregarPlatoPedido($casaDeComidas,$pedido){
+    listarPlatos();
     $opcion = true;
     while($opcion != 0){
         $id_plato = readline("ID Plato: ");
-        $plato = $casaDeComidas->buscarPlato($id_plato);
-        $platos = [];
-        if(isset($plato)){
-            $platos = $plato;
-        }else{
-            echo "El Plato no existe\n";
-        }
+        $cantidad = readline("Cantidad: ");
+
+        
+        $detallePedido = new DetallePedido($pedido->getIdPedido(),$id_plato,$cantidad);
+        
+        $detallePedido->save();
+        $pedido->agregarDetallePedido($detallePedido);
+
         echo "Plato Agregado al Pedido.\n";
         echo "1- Agregar otro Plato\n";
         echo "0- Finalizar Pedido\n";
@@ -222,17 +278,23 @@ function agregarPlatoPedido($casaDeComidas){
 
         $opcion = readline("Opcion: ");
     }
-    return $platos;
+
+    $total = 0;
+    foreach($pedido->getDetallePedido() as $detalle){
+        $total += $detalle->getCantidad() * $detalle->getPrecio();
+    }
+    $pedido->setTotal($total);
+    
 }
 
 function modificarDatosPedido($casaDeComidas){
     $id_pedido = readline("ID Pedido a modificar: ");
     $pedido = $casaDeComidas->buscarPedido($id_pedido);
+    var_dump($pedido);
     if(isset($pedido)){
-        $id_cliente = readline("ID del Cliente: ");
         $fecha = readline("Fecha: ");
         $forma_de_pago = readline("Forma de Pago: ");
-        $casaDeComidas->modificarPedido($id_pedido,$id_cliente,$fecha,$forma_de_pago);
+        $casaDeComidas->modificarDatoPedido($pedido,$id_pedido,$fecha,$forma_de_pago);
     }else{
         echo "El Pedido no Existe\n";
     }
@@ -241,12 +303,24 @@ function modificarDatosPedido($casaDeComidas){
 function modificarContenidoPedido($casaDeComidas){
     $id_pedido = readline("ID Pedido a modificar: ");
     $pedido = $casaDeComidas->buscarPedido($id_pedido);
+    listarDetallePedido($id_pedido);
     if(isset($pedido)){
         $opcion = true;
         while($opcion !=0){
             echo "1- Agregar Plato\n";
             echo "2- Borrar Plato\n";
             echo "0- Finalizar Modificacion\n";
+            switch($opcion){
+                case 1:
+                    $id_plato = readline("ID Plato: ");
+                    $cantidad = readline("Cantidad: ");
+                    $detallePedido = new DetallePedido($pedido->getIdPedido(),$id_plato,$cantidad);
+                    $detallePedido->save();
+                    $pedido->agregarDetallePedido($detallePedido);
+                    break;
+                case 2:
+                    $casaDeComidas->borrarPlatoPedido($pedido);
+            }
         }
         // $casaDeComidas->modificarPedido($id_pedido,$id_cliente,$fecha,$forma_de_pago);
     }else{

@@ -2,16 +2,17 @@
 class Pedido{
     private $id_pedido;
     private $id_cliente;
-    private $platos;
+    private $detallePedido;
     private $fecha;
     private $forma_de_pago;
+    private $total;
     
-    public function __construct($id_pedido,$id_cliente,$platos,$fecha,$forma_de_pago){
-        $this->id_pedido = $id_pedido;
+    public function __construct($id_cliente,$fecha,$forma_de_pago,$total){
         $this->id_cliente = $id_cliente;
-        $this->platos[] = $platos;
+        $this->detallePedido = [];
         $this->fecha = $fecha;
         $this->forma_de_pago = $forma_de_pago;
+        $this->total = $total;
     }
     public function mostrarPedido(){
         echo "Datos del Pedido: ";
@@ -19,7 +20,7 @@ class Pedido{
         echo "\nID Cliente: ".$this->id_cliente;
         echo "\nFecha: ".$this->fecha;
         echo "\nForma de Pago: ".$this->forma_de_pago;
-        echo "\nContenido del Pedido: ".$this->platos;
+        echo "\nTotal: ".$this->total;
 
     }
     public function getIdPedido(){
@@ -28,23 +29,93 @@ class Pedido{
     public function getIdCliente(){
         return $this->id_cliente;
     }
-    public function getPlatos(){
-        return $this->platos;
-    }
     public function getFecha(){
         return $this->fecha;
     }
     public function getFormaDePago(){
         return $this->forma_de_pago;
     }
-    public function agregarPlato($plato){
-        $this->platos[] = $plato;
+    public function getDetallePedido(){
+        return $this->detallePedido;
+    }
+    public function agregarDetallePedido(DetallePedido $detalle) {
+        $this->detallePedido[] = $detalle;
     }
     public function setFecha($fecha){
         $this->fecha = $fecha;
     }
     public function setFormaDePago($forma_de_pago){
         $this->forma_de_pago = $forma_de_pago;
+    }
+    public function setTotal($total){
+        $this->total = $total;
+    }
+    
+    public function setId($id_pedido){
+        $this->id_pedido = $id_pedido;
+        return $this;
+    }
+
+    private function levantarDetallePedido() {
+
+        $detallePedidos= DetallePedido::todos();
+
+        foreach ($detallePedidos as $detalle) {
+
+            $nuevoDetallePedido = new DetallePedido($detalle->id_pedido,$detalle->id_plato,$detalle->cantidad,$detalle->precio_unitario);
+            $this->detallePedido[$detalle->id] = $nuevoDetallePedido;
+            
+            $nuevoDetallePedido->setId($detalle->id);           
+            
+        }
+
+    }
+    static public function todosPedidos() {
+        $sql = "select * from pedido;";
+        $todos = Conexion::query($sql);
+        return $todos;
+    }
+
+    public function save() {
+            $id_cliente = $this->id_cliente;
+            $fecha = $this->fecha;
+            $forma_de_pago = $this->forma_de_pago;
+            $total = $this->total;
+
+        
+        $sql = "INSERT INTO pedido (id_cliente, fecha, forma_de_pago, total)
+                VALUES ('$id_cliente', '$fecha', '$forma_de_pago', $total)";
+
+        Conexion::ejecutar($sql);
+
+        $this->id_pedido = Conexion::getLastId();
+    }
+    public function modificar(){
+        $fecha = $this->fecha;
+        $forma_de_pago = $this->forma_de_pago;
+        $total = $this->total;
+        
+        $sql = "UPDATE pedido SET fecha = '$fecha', forma_de_pago = '$forma_de_pago', total = $total WHERE id_pedido = ".$this->id_pedido;
+        Conexion::ejecutar($sql);
+    }
+    // public function borrarContenidoPedido(){
+    //     $platoPedido = $this->detallePedido[$id];
+    //     unset($this->clientes[$id_cliente]);
+    //     $cliente->eliminar();
+    //     echo "Cliente Borrado \n";
+    // }
+    public function eliminar() {
+        
+        $sql = "DELETE FROM pedido
+                WHERE id_pedido = ".$this->id_pedido;
+
+        Conexion::ejecutar($sql);
+    }
+    public function calcularTotal(){
+        foreach ($this->detallePedido as $detalle){
+            $detalle->get
+            $detalle->getCantidad() * 
+        }
     }
 
 }
