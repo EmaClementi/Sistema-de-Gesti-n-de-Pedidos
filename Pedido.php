@@ -111,11 +111,5 @@ class Pedido{
 
         Conexion::ejecutar($sql);
     }
-    public function calcularTotal(){
-        foreach ($this->detallePedido as $detalle){
-            $detalle->get
-            $detalle->getCantidad() * 
-        }
-    }
 
 }

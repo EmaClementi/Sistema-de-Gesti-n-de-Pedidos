@@ -6,9 +6,10 @@ class Plato{
     public $descripcion;
     public $precio;
     
-    public function __construct($nombre,$descripcion){
+    public function __construct($nombre,$descripcion,$precio){
         $this->nombre = $nombre;
         $this->descripcion = $descripcion;
+        $this->precio = $precio;
     }
     public function mostrarPlato(){
         echo "ID: ".$this->id_plato;
@@ -25,15 +26,24 @@ class Plato{
     public function getDescripcion(){
         return $this->descripcion;
     }
+    public function getPrecio(){
+        return $this->precio;
+    }
     public function setId($id_plato){
         $this->id_plato = $id_plato;
         return $this;
     }
     public function setNombre($nombre){
         $this->nombre = $nombre;
+        return $this;
     }
     public function setDescripcion($descripcion){
         $this->descripcion = $descripcion;
+        return $this;
+    }
+    public function setPrecio($precio){
+        $this->precio = $precio;
+        return $this;
     }
     static public function todos() {
         $sql = "select * from plato;";
@@ -44,10 +54,11 @@ class Plato{
     public function save() {
             $nombre = $this->nombre;
             $descripcion = $this->descripcion;
+            $precio = $this->precio;
 
         
-        $sql = "INSERT INTO plato (nombre, descripcion)
-                VALUES ('$nombre', '$descripcion')";
+        $sql = "INSERT INTO plato (nombre, descripcion, precio)
+                VALUES ('$nombre', '$descripcion', '$precio')";
 
         Conexion::ejecutar($sql);
 
@@ -56,9 +67,10 @@ class Plato{
     public function modificar(){
         $nombre = $this->nombre;
         $descripcion = $this->descripcion;
+        $precio = $this->precio;
 
         
-        $sql = "UPDATE plato SET nombre = '$nombre', descripcion = '$descripcion' WHERE id_plato = ".$this->id_plato;
+        $sql = "UPDATE plato SET nombre = '$nombre', descripcion = '$descripcion', precio = '$precio' WHERE id_plato = ".$this->id_plato;
         Conexion::ejecutar($sql);
     }
 

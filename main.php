@@ -80,7 +80,7 @@ function gestionPedidos($casaDeComidas){
             agregarPedido($casaDeComidas);
             break;
         case 2:
-            //borrarPedido();
+            borrarPedido();
             break;
         case 3:
             modificarDatosPedido($casaDeComidas);
@@ -252,9 +252,7 @@ function agregarPedido($casaDeComidas){
     $fecha = readline("Fecha: ");
     $forma_de_pago = readline("Forma de Pago: ");
     $total = 0;
-
     $pedido = new Pedido($id_cliente,$fecha,$forma_de_pago,$total);
-    $pedido->save();
     $casaDeComidas->agregarPedido($pedido);
     agregarPlatoPedido($casaDeComidas,$pedido);
 }
@@ -264,10 +262,14 @@ function agregarPlatoPedido($casaDeComidas,$pedido){
     while($opcion != 0){
         $id_plato = readline("ID Plato: ");
         $cantidad = readline("Cantidad: ");
+        $plato = $casaDeComidas->buscarPlato($id_plato);
+        var_dump($plato);
+        $total = 0;
+        $total += $plato->getPrecio() * $cantidad;
+        $pedido->setTotal($total);
+        $pedido->save();
 
-        
         $detallePedido = new DetallePedido($pedido->getIdPedido(),$id_plato,$cantidad);
-        
         $detallePedido->save();
         $pedido->agregarDetallePedido($detallePedido);
 
@@ -278,12 +280,7 @@ function agregarPlatoPedido($casaDeComidas,$pedido){
 
         $opcion = readline("Opcion: ");
     }
-
-    $total = 0;
-    foreach($pedido->getDetallePedido() as $detalle){
-        $total += $detalle->getCantidad() * $detalle->getPrecio();
-    }
-    $pedido->setTotal($total);
+    
     
 }
 
@@ -326,5 +323,8 @@ function modificarContenidoPedido($casaDeComidas){
     }else{
         echo "El Plato no Existe\n";
     }
+}
+function borrarPedido(){
+
 }
 

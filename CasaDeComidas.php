@@ -5,7 +5,7 @@ class CasaDeComidas {
     private $nombre;
     private $clientes;
     private $pedidos;
-    private $platos;
+    public $platos;
 
     public function __construct($nombre){
         $this->nombre = $nombre;
@@ -79,7 +79,7 @@ class CasaDeComidas {
 
         foreach ($platos as $plato) {
 
-            $nuevoPlato = new Plato($plato->nombre,$plato->descripcion);
+            $nuevoPlato = new Plato($plato->nombre,$plato->descripcion,$plato->precio);
             $this->platos[$plato->id_plato] = $nuevoPlato;
             
             $nuevoPlato->setId($plato->id_plato);           
@@ -99,18 +99,19 @@ class CasaDeComidas {
         $plato->eliminar();
     }
     public function buscarPlato($id_plato){
-        foreach ($this->platos as $plato){
-            if($plato->getIdPlato() === $id_plato){
-                return $plato;
-           
-            }       
-        }
-        return null;
+        $plato = $this->platos[$id_plato];
+        if($plato != null ){
+            return $plato;
+                
+        }else{
+            echo"No se encontro el plato";
+        }       
     }
-    public function modificarPlato($id_plato,$nombre,$descripcion){
+    public function modificarPlato($id_plato,$nombre,$descripcion,$precio){
         $plato = $this->platos[$id_plato];
         $plato->setNombre($nombre);
         $plato->setDescripcion($descripcion);
+        $plato->setPrecio($precio);
         $plato->modificar();
     }
     private function levantarPedidos() {
