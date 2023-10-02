@@ -63,7 +63,7 @@ function gestionClientes($casaDeComidas){
             listarClientes();
             break;
         default:
-            writeln("ERROR: Dato mal Ingresado");
+            echo("ERROR: Dato mal Ingresado");
             break;
     }
 }
@@ -80,7 +80,7 @@ function gestionPedidos($casaDeComidas){
             agregarPedido($casaDeComidas);
             break;
         case 2:
-            borrarPedido();
+            borrarPedido($casaDeComidas);
             break;
         case 3:
             modificarDatosPedido($casaDeComidas);
@@ -186,8 +186,9 @@ function listarPlatos() {
 function agregarPlato($casaDeComidas){
     $nombre = readline("Nombre del Plato: ");
     $descripcion = readline("Descripcion: ");
+    $precio = readline("Precio");
 
-    $plato = new Plato($nombre,$descripcion);
+    $plato = new Plato($nombre,$descripcion,$precio);
     $plato->save();
     $casaDeComidas->agregarPlato($plato);
 
@@ -324,7 +325,16 @@ function modificarContenidoPedido($casaDeComidas){
         echo "El Plato no Existe\n";
     }
 }
-function borrarPedido(){
+function borrarPedido($casaDeComidas){
+    $id_pedido = readline("ID Pedido a borrar: ");
+    $pedido = $casaDeComidas->buscarPedido($id_pedido);
+    $detallePedido = $pedido->buscarDetallePedido($id_pedido);
+    var_dump($detallePedido);
+    if($detallePedido){
+        $pedido->borrarDetallePedido($detallePedido);
+    }
+    
+    $casaDeComidas->borrarPedido($pedido);
 
 }
 

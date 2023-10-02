@@ -13,6 +13,7 @@ class Pedido{
         $this->fecha = $fecha;
         $this->forma_de_pago = $forma_de_pago;
         $this->total = $total;
+        $this->levantarDetallePedido();
     }
     public function mostrarPedido(){
         echo "Datos del Pedido: ";
@@ -43,12 +44,15 @@ class Pedido{
     }
     public function setFecha($fecha){
         $this->fecha = $fecha;
+        return $this;
     }
     public function setFormaDePago($forma_de_pago){
         $this->forma_de_pago = $forma_de_pago;
+        return $this;
     }
     public function setTotal($total){
         $this->total = $total;
+        return $this;
     }
     
     public function setId($id_pedido){
@@ -62,7 +66,7 @@ class Pedido{
 
         foreach ($detallePedidos as $detalle) {
 
-            $nuevoDetallePedido = new DetallePedido($detalle->id_pedido,$detalle->id_plato,$detalle->cantidad,$detalle->precio_unitario);
+            $nuevoDetallePedido = new DetallePedido($detalle->id_pedido,$detalle->id_plato,$detalle->cantidad);
             $this->detallePedido[$detalle->id] = $nuevoDetallePedido;
             
             $nuevoDetallePedido->setId($detalle->id);           
@@ -110,6 +114,21 @@ class Pedido{
                 WHERE id_pedido = ".$this->id_pedido;
 
         Conexion::ejecutar($sql);
+    }
+    public function buscarDetallePedido($id_pedido){
+        $detalle = $this->detallePedido[$id_pedido];
+        if($detalle != null ){
+            return $detalle;
+                
+        }else{
+            echo "No se encontro";
+        }
+    }
+    public function borrarDetallePedido($detallePedido){
+        $id_detalle = $detallePedido->getId();
+        unset($this->detallePedido[$id_detalle]);
+        $detallePedido->eliminar();
+        echo "Cliente Borrado \n";
     }
 
 }

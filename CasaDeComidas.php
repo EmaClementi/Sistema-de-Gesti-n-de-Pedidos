@@ -137,19 +137,19 @@ class CasaDeComidas {
         }
     }
     public function buscarPedido($id_pedido){
-        foreach ($this->pedidos as $pedido){
-            if($pedido->getIdPedido() === $id_pedido){
-                return $pedido;
-           
-            }       
+        $pedido = $this->pedidos[$id_pedido];
+        if($pedido != null ){
+            return $pedido;
+                
+        }else{
+            echo "No se encontro el pedido";
         }
-        return null;
     }
     public function borrarPedido($pedido){
         $posicion = array_search($pedido,$this->pedidos);
         unset($this->pedidos[$posicion]);
         echo "Pedido Borrado \n";
-        $this->mostrarPedidos();
+        $pedido->eliminar();
     }
     public function modificarDatoPedido($pedido,$id_pedido,$id_cliente,$fecha,$forma_de_pago){
         $pedido = $this->pedidos[$id_pedido];
