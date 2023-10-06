@@ -254,7 +254,7 @@ function agregarPedido($casaDeComidas){
     $forma_de_pago = readline("Forma de Pago: ");
     $total = 0;
     $pedido = new Pedido($id_cliente,$fecha,$forma_de_pago,$total);
-    $casaDeComidas->agregarPedido($pedido);
+    $pedido->save();
     agregarPlatoPedido($casaDeComidas,$pedido);
 }
 function agregarPlatoPedido($casaDeComidas,$pedido){
@@ -268,8 +268,8 @@ function agregarPlatoPedido($casaDeComidas,$pedido){
         $total = 0;
         $total += $plato->getPrecio() * $cantidad;
         $pedido->setTotal($total);
-        $pedido->save();
-
+        
+        $pedido->update();
         $detallePedido = new DetallePedido($pedido->getIdPedido(),$id_plato,$cantidad);
         $detallePedido->save();
         $pedido->agregarDetallePedido($detallePedido);
