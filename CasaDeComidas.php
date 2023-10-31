@@ -42,7 +42,7 @@ class CasaDeComidas {
         return $this->clientes;
     }
     public function agregarCliente($cliente){
-        $this->clientes[] = $cliente;
+        $this->clientes[$cliente->getIdCliente()] = $cliente;
     }
     public function mostrarClientes(){
         foreach ($this-> clientes as $cliente){
@@ -91,7 +91,7 @@ class CasaDeComidas {
         return $this->platos;
     }
     public function agregarPlato($plato){
-        $this->platos[] = $plato;
+        $this->platos[$plato->getIdPlato()] = $plato;
     }
     public function borrarPlato($id_plato){
         $plato = $this->platos[$id_plato];
@@ -129,7 +129,7 @@ class CasaDeComidas {
 
     }
     public function agregarPedido($pedido){
-        $this->pedidos[] = $pedido;
+        $this->pedidos[$pedido->getIdPedido()] = $pedido;
     }
     public function mostrarPedidos(){
         foreach($this->pedidos as $pedido){
@@ -138,31 +138,23 @@ class CasaDeComidas {
     }
     public function buscarPedido($id_pedido){
         $pedido = $this->pedidos[$id_pedido];
-        if($pedido != null ){
-            return $pedido;
-                
-        }else{
-            echo "No se encontro el pedido";
+        return $pedido;
+    }
+    public function borrarPedido($id_pedido){
+        foreach ($this->pedidos as $pedido){
+            if($pedido->getIdPedido() == $id_pedido){
+                unset($this->pedidos[$id_pedido]);
+                echo "Pedido Borrado \n";
+                $pedido->eliminar();
+            }
         }
     }
-    public function borrarPedido($pedido){
-        $posicion = array_search($pedido,$this->pedidos);
-        unset($this->pedidos[$posicion]);
-        echo "Pedido Borrado \n";
-        $pedido->eliminar();
-    }
-    public function modificarDatoPedido($pedido,$id_pedido,$id_cliente,$fecha,$forma_de_pago){
+    public function modificarDatoPedido($id_pedido, $fecha, $forma_de_pago){
         $pedido = $this->pedidos[$id_pedido];
         $pedido->setFecha($fecha);
         $pedido->setFormaDePago($forma_de_pago);
         $pedido->modificar();
     }
-    // public function borrarContenidoPedido($pedido){
-    //     $pedido->
-    //     $pedido->setFecha($fecha);
-    //     $pedido->setFormaDePago($forma_de_pago);
-    //     $pedido->modificar();
-    // }
 
 }
 

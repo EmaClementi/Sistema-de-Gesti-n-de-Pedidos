@@ -40,7 +40,7 @@ class Pedido{
         return $this->detallePedido;
     }
     public function agregarDetallePedido(DetallePedido $detalle) {
-        $this->detallePedido[] = $detalle;
+        $this->detallePedido[$detalle->getId()] = $detalle;
     }
     public function setFecha($fecha){
         $this->fecha = $fecha;
@@ -102,12 +102,27 @@ class Pedido{
         $sql = "UPDATE pedido SET fecha = '$fecha', forma_de_pago = '$forma_de_pago', total = $total WHERE id_pedido = ".$this->id_pedido;
         Conexion::ejecutar($sql);
     }
-    // public function borrarContenidoPedido(){
-    //     $platoPedido = $this->detallePedido[$id];
-    //     unset($this->clientes[$id_cliente]);
-    //     $cliente->eliminar();
-    //     echo "Cliente Borrado \n";
-    // }
+    public function update(){
+        $total = $this->total;
+        
+        $sql = "UPDATE pedido SET total = $total WHERE id_pedido = ".$this->id_pedido;
+        Conexion::ejecutar($sql);
+    }
+    public function borrarPlatoPedido($id_pedido,$id_plato){
+        foreach($this->detallePedido as $detalle){
+            if($id_pedido == $detalle->getIdPedido()){
+                if($detalle->getIdPlato() == $id_plato){
+                    $this->borrarDetallePedido($detalle);
+                }
+        }
+    }
+    }
+    public function borrarDetallePedido($detalle){
+        $id_detalle = $detalle->getId();
+        unset($this->detallePedido[$id_detalle]);
+        echo "Plato Borrado\n";
+        $detalle->eliminar();
+    }
     public function eliminar() {
         
         $sql = "DELETE FROM pedido
@@ -116,19 +131,13 @@ class Pedido{
         Conexion::ejecutar($sql);
     }
     public function buscarDetallePedido($id_pedido){
-        $detalle = $this->detallePedido[$id_pedido];
-        if($detalle != null ){
-            return $detalle;
-                
-        }else{
-            echo "No se encontro";
+        foreach ($this->detallePedido as $detalle){
+            if($detalle->getIdPedido() == $id_pedido){
+                return $detalle;
+            }else{
+                echo "No se encontro";
+            }
         }
-    }
-    public function borrarDetallePedido($detallePedido){
-        $id_detalle = $detallePedido->getId();
-        unset($this->detallePedido[$id_detalle]);
-        $detallePedido->eliminar();
-        echo "Cliente Borrado \n";
     }
 
 }
