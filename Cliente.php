@@ -14,14 +14,6 @@ class Cliente {
         $this->direccion = $direccion;
         $this->telefono = $telefono;
     }
-    public function mostrarCliente(){
-        echo "ID: ".$this->id_cliente;
-        echo "\nNombre: ".$this->nombre ;
-        echo "\nApellido: ".$this->apellido;
-        echo "\nDireccion: ".$this->direccion;
-        echo "\nTelefono: ".$this->telefono;
-        echo "\n==============================\n";
-    }
     public function getIdCliente(){
         return $this->id_cliente;
     }

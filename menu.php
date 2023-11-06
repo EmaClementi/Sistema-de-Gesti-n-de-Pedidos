@@ -49,7 +49,13 @@ function menuPrincipal($casaDeComidas){
     if (!$opcionValida) {
         echo ("Error: Opcion no valida.\n").PHP_EOL;
         menuPrincipal($casaDeComidas);
+    }else if ($opcionValida == 0){
+        echo ("").PHP_EOL;
     }
+}
+function salir(){
+    echo ("Cerrando Sesion...");
+    exit;
 }
 menuPrincipal($casaDeComidas);
 function menuClientes($casaDeComidas) {

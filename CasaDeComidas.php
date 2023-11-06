@@ -116,7 +116,7 @@ class CasaDeComidas {
     }
     private function levantarPedidos() {
 
-        $pedidos = Pedido::todosPedidos(); // Levanto los platos de la BD
+        $pedidos = Pedido::todosPedidos(); 
 
         foreach ($pedidos as $pedido) {
 

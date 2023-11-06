@@ -15,15 +15,6 @@ class Pedido{
         $this->total = $total;
         $this->levantarDetallePedido();
     }
-    public function mostrarPedido(){
-        echo "Datos del Pedido: ";
-        echo "\nID Pedido: ".$this->id_pedido;
-        echo "\nID Cliente: ".$this->id_cliente;
-        echo "\nFecha: ".$this->fecha;
-        echo "\nForma de Pago: ".$this->forma_de_pago;
-        echo "\nTotal: ".$this->total;
-
-    }
     public function getIdPedido(){
         return $this->id_pedido;
     }

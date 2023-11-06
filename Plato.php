@@ -11,12 +11,6 @@ class Plato{
         $this->descripcion = $descripcion;
         $this->precio = $precio;
     }
-    public function mostrarPlato(){
-        echo "ID: ".$this->id_plato;
-        echo "\nNombre: ".$this->nombre ;
-        echo "\nDescripcion: ".$this->descripcion;
-        echo "\n==============================\n";
-    }
     public function getIdPlato(){
         return $this->id_plato;
     }
