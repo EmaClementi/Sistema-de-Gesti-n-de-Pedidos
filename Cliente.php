@@ -3,8 +3,8 @@
 require_once('Conexion.php');
 class Cliente {
     private $id_cliente;
-    private $nombre;
-    private $apellido;
+    public $nombre;
+    public $apellido;
     private $direccion;
     private $telefono;
     

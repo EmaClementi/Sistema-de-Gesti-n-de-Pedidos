@@ -120,7 +120,7 @@ class CasaDeComidas {
 
         foreach ($pedidos as $pedido) {
 
-            $nuevoPedido = new Pedido($pedido->id_cliente,$pedido->fecha,$pedido->forma_de_pago,$pedido->total);
+            $nuevoPedido = new Pedido($pedido->id_cliente,$pedido->fecha,$pedido->forma_de_pago,$pedido->total,$pedido->estado);
             $this->pedidos[$pedido->id_pedido] = $nuevoPedido;
             
             $nuevoPedido->setId($pedido->id_pedido);           
@@ -149,10 +149,11 @@ class CasaDeComidas {
             }
         }
     }
-    public function modificarDatoPedido($id_pedido, $fecha, $forma_de_pago){
+    public function modificarDatoPedido($id_pedido, $fecha, $forma_de_pago, $estado){
         $pedido = $this->pedidos[$id_pedido];
         $pedido->setFecha($fecha);
         $pedido->setFormaDePago($forma_de_pago);
+        $pedido->setEstadoPedido($estado);
         $pedido->modificar();
     }
 

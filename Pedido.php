@@ -6,13 +6,15 @@ class Pedido{
     private $fecha;
     private $forma_de_pago;
     private $total;
+    public $estado;
     
-    public function __construct($id_cliente,$fecha,$forma_de_pago,$total){
+    public function __construct($id_cliente,$fecha,$forma_de_pago,$total,$estado){
         $this->id_cliente = $id_cliente;
         $this->detallePedido = [];
         $this->fecha = $fecha;
         $this->forma_de_pago = $forma_de_pago;
         $this->total = $total;
+        $this->estado = $estado;
         $this->levantarDetallePedido();
     }
     public function getIdPedido(){
@@ -29,6 +31,9 @@ class Pedido{
     }
     public function getDetallePedido(){
         return $this->detallePedido;
+    }
+    public function getEstadoPedido(){
+        return $this->estado;
     }
     public function agregarDetallePedido(DetallePedido $detalle) {
         $this->detallePedido[$detalle->getId()] = $detalle;
@@ -48,6 +53,10 @@ class Pedido{
     
     public function setId($id_pedido){
         $this->id_pedido = $id_pedido;
+        return $this;
+    }
+    public function setEstadoPedido($estado){
+        $this->estado = $estado;
         return $this;
     }
 
@@ -76,10 +85,11 @@ class Pedido{
             $fecha = $this->fecha;
             $forma_de_pago = $this->forma_de_pago;
             $total = $this->total;
+            $estado = $this->estado;
 
         
-        $sql = "INSERT INTO pedido (id_cliente, fecha, forma_de_pago, total)
-                VALUES ('$id_cliente', '$fecha', '$forma_de_pago', $total)";
+        $sql = "INSERT INTO pedido (id_cliente, fecha, forma_de_pago, total, estado)
+                VALUES ('$id_cliente', '$fecha', '$forma_de_pago', $total, '$estado')";
 
         Conexion::ejecutar($sql);
 
@@ -89,8 +99,9 @@ class Pedido{
         $fecha = $this->fecha;
         $forma_de_pago = $this->forma_de_pago;
         $total = $this->total;
+        $estado = $this->estado;
         
-        $sql = "UPDATE pedido SET fecha = '$fecha', forma_de_pago = '$forma_de_pago', total = $total WHERE id_pedido = ".$this->id_pedido;
+        $sql = "UPDATE pedido SET fecha = '$fecha', forma_de_pago = '$forma_de_pago', total = $total, estado = '$estado', WHERE id_pedido = ".$this->id_pedido;
         Conexion::ejecutar($sql);
     }
     public function update(){

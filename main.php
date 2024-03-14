@@ -125,16 +125,59 @@ function modificarPlato($casaDeComidas){
 
 function listarPedidos($casaDeComidas) {
     $todos = Pedido::todosPedidos();
-    echo "ID Pedido | ID Cliente |    Fecha    | Forma de Pago | Total\n";
+    echo "ID Pedido |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |   Estado   |\n";
     foreach ($todos as $pedido) {
-        echo ($pedido->id_pedido);    echo ('            '); 
-        echo ($pedido->id_cliente);echo ('           ');
-        echo ($pedido->fecha);echo ('     ');
-        echo ($pedido->forma_de_pago);echo ('     ');
-        echo ($pedido->total);
+        $id_cliente = $pedido->id_cliente;
+        $cliente = $casaDeComidas->buscarCliente($id_cliente);
+
+        echo ($pedido->id_pedido);    echo ('             '); 
+        echo ($cliente->nombre);echo ('       ');
+        echo ($cliente->apellido);echo ('     ');
+        echo ($pedido->fecha);echo ('      ');
+        echo ($pedido->forma_de_pago);echo ('        ');
+        echo ($pedido->total);echo ('      ');
+        echo ($pedido->estado);
         echo (PHP_EOL);            
     }
-    menuPedidos($casaDeComidas);
+    echo ("============ Pedidos ============ \n");
+    echo ("0- Volver \n");
+    echo ("1- Ver Contenido del Pedido \n");
+    echo ("2- Listar Pedidos por Estado \n");
+
+    $opcion = readline("Opcion: ");
+        switch ($opcion) {
+            case 1:
+                $id_pedido = readline("ID Pedido: ");
+                listarDetallePedido($id_pedido);
+                menuPedidos($casaDeComidas);
+                break;
+            case 2:
+                estadoPedidos($casaDeComidas);
+            case 0:
+                menuPedidos($casaDeComidas);
+                break;
+            default:
+                echo ("Opcion no valida \n");
+        }
+}
+function listarPedidoPorEstado($casaDeComidas, $estado) {
+    $todos = Pedido::todosPedidos();
+
+    echo "ID Pedido |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |   Estado   |\n";
+    foreach ($todos as $pedido) {
+        $id_cliente = $pedido->id_cliente;
+        $cliente = $casaDeComidas->buscarCliente($id_cliente);
+        if ($pedido->estado == $estado) {
+            echo ($pedido->id_pedido);    echo ('             '); 
+            echo ($cliente->getNombre());echo ('       ');
+            echo ($cliente->getApellido());echo ('     ');
+            echo ($pedido->fecha);echo ('      ');
+            echo ($pedido->forma_de_pago);echo ('        ');
+            echo ($pedido->total);echo ('      ');
+            echo ($pedido->estado);
+            echo (PHP_EOL);  
+        }       
+    }
 }
 function listarDetallePedido($id_pedido) {
     $todos = DetallePedido::todosDetallePedido($id_pedido);
@@ -160,19 +203,65 @@ function agregarPedido($casaDeComidas){
 
     $id_cliente = readline("Id de Cliente: ");
     $fecha = readline("Fecha: ");
-    $forma_de_pago = readline("Forma de Pago: ");
+    $opcion = true;
+    $forma_de_pago = null;
+    while ($opcion != 0){
+        echo ("============= Forma De Pago ============= \n");
+        echo ("1- Transferencia \n");
+        echo ("2- Efectivo \n");
+        echo ("3- Tarjeta \n");
+        $opcion = readline("Ingrese una opcion: ");
+        switch ($opcion) {
+            case 1:
+                $forma_de_pago = "Transferencia";
+                break 2;
+            case 2:
+                $forma_de_pago = "Efectivo";
+                break 2;
+            case 3:
+                $forma_de_pago = "Tarjeta";
+                break 2;
+            default:
+                echo ("Opcion no valida \n");
+        }
+    }
+    $estado="";
     $total = 0;
-    $pedido = new Pedido($id_cliente,$fecha,$forma_de_pago,$total);
+    $opcionEstado = true;
+    while ($opcionEstado != 0) {
+        echo ("============= Estado Del Pedido ============= \n");
+        echo ("1- En Preparacion \n");
+        echo ("2- En Camino \n");
+        echo ("3- Entregado \n");
+        $opcionEstado = readline("Ingrese una opcion: ");
+        switch ($opcionEstado) {
+            case 1:
+                $estado = "En Preparacion";
+                break 2;
+            case 2:
+                $estado = "En Camino";
+                break 2;
+            case 3:
+                $estado = "Entregado";
+                break 2;
+            default:
+                echo ("Opcion no valida \n");
+        }
+    }
+    
+
+    $pedido = new Pedido($id_cliente,$fecha,$forma_de_pago,$total,$estado);
     $pedido->save();
     $casaDeComidas->agregarPedido($pedido);
     agregarPlatoPedido($casaDeComidas,$pedido);
 }
 function agregarPlatoPedido($casaDeComidas,$pedido){
     $todos = Plato::todos();
-    echo "ID Plato |        Nombre             \n";
+    echo "ID Plato |          Nombre             |  Precio  |\n";
     foreach ($todos as $plato) {
         echo ($plato->id_plato);    echo ('          '); 
-        echo ($plato->nombre); echo ('      '); 
+        echo ($plato->nombre); echo ('                $');
+        echo ($plato->precio); echo ('      '); 
         echo (PHP_EOL);            
     }
     $opcion = true;
@@ -202,34 +291,49 @@ function agregarPlatoPedido($casaDeComidas,$pedido){
 
 function modificarDatosPedido($casaDeComidas){
     $todos = Pedido::todosPedidos();
-    echo "ID Pedido | ID Cliente |    Fecha    | Forma de Pago | Total\n";
     foreach ($todos as $pedido) {
-        echo ($pedido->id_pedido);    echo ('            '); 
+        $id_cliente = $pedido->id_cliente;
+        $cliente = $casaDeComidas->buscarCliente($id_cliente);
+    }
+    echo "ID Pedido | ID Cliente |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |  Estado  |\n";
+    foreach ($todos as $pedido) {
+        echo ($pedido->id_pedido);    echo ('           '); 
         echo ($pedido->id_cliente);echo ('           ');
-        echo ($pedido->fecha);echo ('     ');
-        echo ($pedido->forma_de_pago);echo ('     ');
-        echo ($pedido->total);
-        echo (PHP_EOL);            
+        echo ($cliente->getNombre());echo ('     ');
+        echo ($cliente->getApellido());echo ('      ');
+        echo ($pedido->fecha);echo ('       ');
+        echo ($pedido->forma_de_pago);echo ('        ');
+        echo ($pedido->total);echo ('      ');
+        echo ($pedido->estado);
+        echo (PHP_EOL);                
     }
 
     $id_pedido = readline("ID Pedido a modificar: ");
     $fecha = readline("Fecha: ");
     $forma_de_pago = readline("Forma de Pago: ");
-    $casaDeComidas->modificarDatoPedido($id_pedido,$fecha,$forma_de_pago);
+    $estado = readline("Estado del Pedido: ");
+    $casaDeComidas->modificarDatoPedido($id_pedido,$fecha,$forma_de_pago,$estado);
 
     menuPedidos($casaDeComidas);
 }
 
 function modificarContenidoPedido($casaDeComidas){
     $todos = Pedido::todosPedidos();
-    echo "ID Pedido | ID Cliente |    Fecha    | Forma de Pago | Total\n";
     foreach ($todos as $pedido) {
-        echo ($pedido->id_pedido);    echo ('            '); 
+        $id_cliente = $pedido->id_cliente;
+        $cliente = $casaDeComidas->buscarCliente($id_cliente);
+    }
+    echo "ID Pedido | ID Cliente |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |  Estado  |\n";
+    foreach ($todos as $pedido) {
+        echo ($pedido->id_pedido);    echo ('           '); 
         echo ($pedido->id_cliente);echo ('           ');
-        echo ($pedido->fecha);echo ('     ');
-        echo ($pedido->forma_de_pago);echo ('     ');
-        echo ($pedido->total);
-        echo (PHP_EOL);            
+        echo ($cliente->getNombre());echo ('     ');
+        echo ($cliente->getApellido());echo ('      ');
+        echo ($pedido->fecha);echo ('       ');
+        echo ($pedido->forma_de_pago);echo ('        ');
+        echo ($pedido->total);echo ('      ');
+        echo ($pedido->estado);
+        echo (PHP_EOL);       
     }
     $id_pedido = readline("ID Pedido a modificar: ");
     $pedido = $casaDeComidas->buscarPedido($id_pedido);
@@ -265,4 +369,24 @@ function borrarPedido($casaDeComidas){
     $casaDeComidas->borrarPedido($id_pedido);
     menuPedidos($casaDeComidas);
 }
+function registroFacturacionTotalPorDia($casaDeComidas) {
+    $todos = Pedido::todosPedidos();
+    $registro = [];
 
+    foreach ($todos as $pedido) {
+        $fecha = $pedido->fecha;
+        $total = $pedido->total;
+
+        if (!isset($registro[$fecha])) {
+            $registro[$fecha] = 0;
+        }
+
+        $registro[$fecha] += $total;
+    }
+
+    echo "Fecha       |   Total Facturado\n";
+    foreach ($registro as $fecha => $total) {
+        echo $fecha . '   |   $' . $total . PHP_EOL;
+    }
+    menuPrincipal($casaDeComidas);
+}

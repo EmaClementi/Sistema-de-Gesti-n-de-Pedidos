@@ -43,6 +43,7 @@ function menuPrincipal($casaDeComidas){
         ['1', 'Gestionar Clientes', 'menuClientes', [$casaDeComidas]],
         ['2', 'Gestionar Pedidos', 'menuPedidos', [$casaDeComidas]],
         ['3', 'Gestionar Platos', 'menuPlatos', [$casaDeComidas]],
+        ['4', 'Ver Facturacion Total Por Dia', 'registroFacturacionTotalPorDia', [$casaDeComidas]]
     ];
 
     $opcionValida = menu('============ Menu Principal ============', $opcionesPrincipales);
@@ -78,6 +79,15 @@ function menuPedidos($casaDeComidas) {
         ['5', 'Listar Pedidos', 'listarPedidos', [$casaDeComidas]]
     ];
     menu('============ Pedidos ============', $opcionesClientes);
+}
+function estadoPedidos($casaDeComidas) {
+    $opcionesClientes = [
+        ['0', 'Volver', 'menuPrincipal', [$casaDeComidas]],
+        ['1', 'Ver Pedidos En Preparacion', 'listarPedidoPorEstado', [$casaDeComidas, "En Preparacion"]],
+        ['2', 'Ver Pedidos En Camino', 'listarPedidoPorEstado', [$casaDeComidas, "En Camino"]],
+        ['3', 'Ver Pedidos Entregados', 'listarPedidoPorEstado', [$casaDeComidas, "Entregado"]]
+    ];
+    menu('============ Estado de los Pedidos ============', $opcionesClientes);
 }
 function menuPlatos($casaDeComidas) {
     $opcionesClientes = [
