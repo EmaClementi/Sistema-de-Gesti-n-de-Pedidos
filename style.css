@@ -1,0 +1,49 @@
+body {
+    background-color: #2d6653; /* Aqua Green */
+    color: #b4a906; /* Beige */
+    font-family: Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color:#b4a906; /* Beige */
+}
+
+a {
+    color:#b4a906; /* Beige */
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.btn-primary {
+    background-color: #b4a906;/* Beige */
+    color: #01885b; /* Aqua Green */
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #D2B48C; /* Tan */
+    color:#01885b; /* Aqua Green */
+}
+
+.container {
+    padding: 20px;
+}
+
+.form-control {
+    border: 1px solid #F5F5DC; /* Beige */
+    background-color: #01885b; /* Aqua Green */
+    color: #F5F5DC; /* Beige */
+}
+
+.form-control::placeholder {
+    color: #F5F5DC; /* Beige */
+}
+
+.form-control:focus {
+    border-color: #D2B48C; /* Tan */
+    box-shadow: none;
+    outline: none;
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor de Casa de Comidas</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Gestor de Casa de Comidas</h1>
+        <form action="router.php" method="POST">
+            <div class="form-group">
+                <label for="option">Selecciona una opción:</label>
+                <select class="form-control" id="option" name="option">
+                    <option value="clientes">Gestionar Clientes</option>
+                    <option value="pedidos">Gestionar Pedidos</option>
+                    <option value="platos">Gestionar Platos</option>
+                    <option value="facturacion">Ver Facturación Total Por Día</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>
