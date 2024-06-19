@@ -269,13 +269,15 @@ function agregarPlatoPedido($casaDeComidas,$pedido){
         $id_plato = readline("ID Plato: ");
         $cantidad = readline("Cantidad: ");
         $plato = $casaDeComidas->buscarPlato($id_plato);
-        $total = 0;
-        $total += $plato->getPrecio() * $cantidad;
-        $pedido->setTotal($total);
-        
-        $pedido->update();
+        $totalDetalle = 0;
+        $totalDetalle += $plato->getPrecio() * $cantidad;
+
         $detallePedido = new DetallePedido($pedido->getIdPedido(),$id_plato,$cantidad);
         $detallePedido->save();
+        $total = $pedido->getTotalPedido();
+        $total += $totalDetalle;
+        $pedido->setTotal($total);
+        $pedido->update();
         $pedido->agregarDetallePedido($detallePedido);
 
         echo "Plato Agregado al Pedido.\n";
@@ -291,12 +293,10 @@ function agregarPlatoPedido($casaDeComidas,$pedido){
 
 function modificarDatosPedido($casaDeComidas){
     $todos = Pedido::todosPedidos();
+    echo "ID Pedido | ID Cliente |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |  Estado  |\n";
     foreach ($todos as $pedido) {
         $id_cliente = $pedido->id_cliente;
         $cliente = $casaDeComidas->buscarCliente($id_cliente);
-    }
-    echo "ID Pedido | ID Cliente |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |  Estado  |\n";
-    foreach ($todos as $pedido) {
         echo ($pedido->id_pedido);    echo ('           '); 
         echo ($pedido->id_cliente);echo ('           ');
         echo ($cliente->getNombre());echo ('     ');
@@ -309,22 +309,44 @@ function modificarDatosPedido($casaDeComidas){
     }
 
     $id_pedido = readline("ID Pedido a modificar: ");
-    $fecha = readline("Fecha: ");
-    $forma_de_pago = readline("Forma de Pago: ");
-    $estado = readline("Estado del Pedido: ");
-    $casaDeComidas->modificarDatoPedido($id_pedido,$fecha,$forma_de_pago,$estado);
+    $pedido = $casaDeComidas->buscarPedido($id_pedido);
+    if(isset($pedido)){
+        $estado = $pedido->getEstadoPedido();
+        $fecha = readline("Fecha: ");
+        $opcion = true;
+        $forma_de_pago = null;
+        while ($opcion != 0){
+            echo ("============= Forma De Pago ============= \n");
+            echo ("1- Transferencia \n");
+            echo ("2- Efectivo \n");
+            echo ("3- Tarjeta \n");
+            $opcion = readline("Ingrese una opcion: ");
+            switch ($opcion) {
+                case 1:
+                    $forma_de_pago = "Transferencia";
+                    break 2;
+                case 2:
+                    $forma_de_pago = "Efectivo";
+                    break 2;
+                case 3:
+                    $forma_de_pago = "Tarjeta";
+                    break 2;
+                default:
+                    echo ("Opcion no valida \n");
+            }
+        }
+        $casaDeComidas->modificarDatoPedido($pedido,$fecha,$forma_de_pago,$estado);
+    }
 
     menuPedidos($casaDeComidas);
 }
 
 function modificarContenidoPedido($casaDeComidas){
     $todos = Pedido::todosPedidos();
+    echo "ID Pedido | ID Cliente |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |  Estado  |\n";
     foreach ($todos as $pedido) {
         $id_cliente = $pedido->id_cliente;
         $cliente = $casaDeComidas->buscarCliente($id_cliente);
-    }
-    echo "ID Pedido | ID Cliente |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |  Estado  |\n";
-    foreach ($todos as $pedido) {
         echo ($pedido->id_pedido);    echo ('           '); 
         echo ($pedido->id_cliente);echo ('           ');
         echo ($cliente->getNombre());echo ('     ');
@@ -336,32 +358,37 @@ function modificarContenidoPedido($casaDeComidas){
         echo (PHP_EOL);       
     }
     $id_pedido = readline("ID Pedido a modificar: ");
-    $pedido = $casaDeComidas->buscarPedido($id_pedido);
-    listarDetallePedido($id_pedido);
-    if(isset($pedido)){
-        $opcion = true;
-        while($opcion !=0){
-            echo "1- Agregar Plato\n";
-            echo "2- Borrar Plato\n";
-            echo "0- Finalizar Modificacion\n";
-            $opcion = readline("Opcion: ");
-            switch($opcion){
-                case 1:
-                    listarPlatos($casaDeComidas);
-                    $id_plato = readline("ID Plato: ");
-                    $cantidad = readline("Cantidad: ");
-                    $detallePedido = new DetallePedido($pedido->getIdPedido(),$id_plato,$cantidad);
-                    $detallePedido->save();
-                    $pedido->agregarDetallePedido($detallePedido);
-                    break;
-                case 2:
-                    $id_plato = readline("ID Plato a eliminar: ");
-                    $pedido->borrarPlatoPedido($id_pedido,$id_plato);
-            }
-        }
+    if(!is_numeric($id_pedido)){
+        echo "El caracter ingresado no es valido \n";
     }else{
-        echo "El Plato no Existe\n";
+        $pedido = $casaDeComidas->buscarPedido($id_pedido);
+        if(isset($pedido) && $pedido != null){
+            $opcion = true;
+            listarDetallePedido($id_pedido);
+            while($opcion !=0){
+                echo "1- Agregar Plato\n";
+                echo "2- Borrar Plato\n";
+                echo "0- Finalizar Modificacion\n";
+                $opcion = readline("Opcion: ");
+                switch($opcion){
+                    case 1:
+                        listarPlatos($casaDeComidas);
+                        $id_plato = readline("ID Plato: ");
+                        $cantidad = readline("Cantidad: ");
+                        $detallePedido = new DetallePedido($pedido->getIdPedido(),$id_plato,$cantidad);
+                        $detallePedido->save();
+                        $pedido->agregarDetallePedido($detallePedido);
+                        break;
+                    case 2:
+                        $id_plato = readline("ID Plato a eliminar: ");
+                        $pedido->borrarPlatoPedido($id_pedido,$id_plato);
+                }
+            }
+        }else{
+            echo "Volviendo al menu princial...\n";
+        }
     }
+
     menuPedidos($casaDeComidas);
 }
 function borrarPedido($casaDeComidas){

@@ -13,11 +13,11 @@
         }
 
         static function nuevaConexion() {
-            $host = 'drona.db.elephantsql.com'; // Normalmente "localhost"
-            $dbname = 'sitwbypr';
+            $host = 'localhost'; // Normalmente "localhost"
+            $dbname = 'Sistema_Gestion_Pedidos';
             $dbport = 5432;
-            $usuario = 'sitwbypr';
-            $password = 'ScYNDu24KXaUfQflUzz6Ob_nD1o9fpaH';
+            $usuario = 'postgres';
+            $password = 'postgres';
     
             $pDO = new PDO("pgsql:host=$host;dbname=$dbname;port=$dbport", $usuario, $password);
     

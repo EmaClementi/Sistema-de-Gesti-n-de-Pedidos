@@ -1,5 +1,5 @@
 <?php
-
+require_once('menu.php');
 
 class CasaDeComidas {
     private $nombre;
@@ -137,9 +137,15 @@ class CasaDeComidas {
         }
     }
     public function buscarPedido($id_pedido){
-        $pedido = $this->pedidos[$id_pedido];
-        return $pedido;
+        if(isset($this->pedidos[$id_pedido])){
+            $pedido = $this->pedidos[$id_pedido];
+            return $pedido;
+        } else {
+            echo "No se encontró el pedido\n";
+            return null;
+        }
     }
+    
     public function borrarPedido($id_pedido){
         foreach ($this->pedidos as $pedido){
             if($pedido->getIdPedido() == $id_pedido){
@@ -149,8 +155,7 @@ class CasaDeComidas {
             }
         }
     }
-    public function modificarDatoPedido($id_pedido, $fecha, $forma_de_pago, $estado){
-        $pedido = $this->pedidos[$id_pedido];
+    public function modificarDatoPedido($pedido, $fecha, $forma_de_pago, $estado){
         $pedido->setFecha($fecha);
         $pedido->setFormaDePago($forma_de_pago);
         $pedido->setEstadoPedido($estado);

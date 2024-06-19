@@ -32,6 +32,9 @@ class Pedido{
     public function getDetallePedido(){
         return $this->detallePedido;
     }
+    public function getTotalPedido(){
+        return $this->total;
+    }
     public function getEstadoPedido(){
         return $this->estado;
     }
@@ -101,7 +104,7 @@ class Pedido{
         $total = $this->total;
         $estado = $this->estado;
         
-        $sql = "UPDATE pedido SET fecha = '$fecha', forma_de_pago = '$forma_de_pago', total = $total, estado = '$estado', WHERE id_pedido = ".$this->id_pedido;
+        $sql = "UPDATE pedido SET fecha = '$fecha', forma_de_pago = '$forma_de_pago', total = $total, estado = '$estado' WHERE id_pedido = ".$this->id_pedido;
         Conexion::ejecutar($sql);
     }
     public function update(){
