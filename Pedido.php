@@ -107,6 +107,12 @@ class Pedido{
         $sql = "UPDATE pedido SET fecha = '$fecha', forma_de_pago = '$forma_de_pago', total = $total, estado = '$estado' WHERE id_pedido = ".$this->id_pedido;
         Conexion::ejecutar($sql);
     }
+    public function updateEstado(){
+        $estado = $this->estado;
+
+        $sql = "UPDATE pedido SET estado = '$estado' WHERE id_pedido = ".$this->id_pedido;
+        Conexion::ejecutar($sql);
+    }
     public function update(){
         $total = $this->total;
         

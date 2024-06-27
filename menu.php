@@ -74,9 +74,10 @@ function menuPedidos($casaDeComidas) {
         ['0', 'Volver', 'menuPrincipal', [$casaDeComidas]],
         ['1', 'Agregar Pedido', 'agregarPedido', [$casaDeComidas]],
         ['2', 'Borrar Pedido', 'borrarPedido', [$casaDeComidas]],
-        ['3', 'Modificar Datos del Pedido', 'modificarDatosPedido', [$casaDeComidas]],
-        ['4', 'Modificar Contenido del Pedido', 'modificarContenidoPedido', [$casaDeComidas]],
-        ['5', 'Listar Pedidos', 'listarPedidos', [$casaDeComidas]]
+        ['3', 'Modificar Estado del Pedido', 'modificarEstadoPedido', [$casaDeComidas]],
+        ['4', 'Modificar Datos del Pedido', 'modificarDatosPedido', [$casaDeComidas]],
+        ['5', 'Modificar Contenido del Pedido', 'modificarContenidoPedido', [$casaDeComidas]],
+        ['6', 'Listar Pedidos', 'listarPedidos', [$casaDeComidas]]
     ];
     menu('============ Pedidos ============', $opcionesClientes);
 }

@@ -161,6 +161,10 @@ class CasaDeComidas {
         $pedido->setEstadoPedido($estado);
         $pedido->modificar();
     }
+    public function modificarEstadoPedido($pedido, $estado){
+        $pedido->setEstadoPedido($estado);
+        $pedido->updateEstado();
+    }
 
 }
 

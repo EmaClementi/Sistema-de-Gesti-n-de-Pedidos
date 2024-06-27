@@ -122,6 +122,36 @@ function modificarPlato($casaDeComidas){
 
 }
 
+function modificarEstadoPedido($casaDeComidas){
+    estadoPedidos($casaDeComidas);
+    
+    $id_pedido = readline("ID Pedido a modificar: ");
+    $pedido = $casaDeComidas->buscarPedido($id_pedido);
+
+    $estado="";
+    $opcionEstado = true;
+    while ($opcionEstado != 0) {
+        echo ("============= Estado Del Pedido ============= \n");
+        echo ("1- En Preparacion \n");
+        echo ("2- En Camino \n");
+        echo ("3- Entregado \n");
+        $opcionEstado = readline("Ingrese una opcion: ");
+        switch ($opcionEstado) {
+            case 1:
+                $estado = "En Preparacion";
+                break 2;
+            case 2:
+                $estado = "En Camino";
+                break 2;
+            case 3:
+                $estado = "Entregado";
+                break 2;
+            default:
+                echo ("Opcion no valida \n");
+        }
+    }
+    $casaDeComidas->modificarEstadoPedido($pedido, $estado);
+}
 
 function listarPedidos($casaDeComidas) {
     $todos = Pedido::todosPedidos();
@@ -148,7 +178,7 @@ function listarPedidos($casaDeComidas) {
         switch ($opcion) {
             case 1:
                 $id_pedido = readline("ID Pedido: ");
-                listarDetallePedido($id_pedido);
+                listarDetallePedido($id_pedido, $casaDeComidas);
                 menuPedidos($casaDeComidas);
                 break;
             case 2:
@@ -179,12 +209,15 @@ function listarPedidoPorEstado($casaDeComidas, $estado) {
         }       
     }
 }
-function listarDetallePedido($id_pedido) {
+function listarDetallePedido($id_pedido, $casaDeComidas) {
     $todos = DetallePedido::todosDetallePedido($id_pedido);
-    echo "ID Pedido | ID Plato | Cantidad |\n";
+    echo "ID Pedido | ID Plato |     Nombre    | Cantidad |\n";
     foreach ($todos as $detalle) {
+        $id_plato = $detalle->id_plato;
+        $plato = $casaDeComidas->buscarPlato($id_plato);
         echo ($detalle->id_pedido);    echo ('               '); 
-        echo ($detalle->id_plato);    echo ('         '); 
+        echo ($detalle->id_plato);    echo ('         ');
+        echo ($plato->getNombre());   echo ('           ');
         echo ($detalle->cantidad);    echo ('          '); 
         echo (PHP_EOL);            
     }
@@ -364,7 +397,7 @@ function modificarContenidoPedido($casaDeComidas){
         $pedido = $casaDeComidas->buscarPedido($id_pedido);
         if(isset($pedido) && $pedido != null){
             $opcion = true;
-            listarDetallePedido($id_pedido);
+            listarDetallePedido($id_pedido, $casaDeComidas);
             while($opcion !=0){
                 echo "1- Agregar Plato\n";
                 echo "2- Borrar Plato\n";
