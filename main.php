@@ -124,33 +124,35 @@ function modificarPlato($casaDeComidas){
 
 function modificarEstadoPedido($casaDeComidas){
     estadoPedidos($casaDeComidas);
-    
     $id_pedido = readline("ID Pedido a modificar: ");
     $pedido = $casaDeComidas->buscarPedido($id_pedido);
 
-    $estado="";
-    $opcionEstado = true;
-    while ($opcionEstado != 0) {
-        echo ("============= Estado Del Pedido ============= \n");
-        echo ("1- En Preparacion \n");
-        echo ("2- En Camino \n");
-        echo ("3- Entregado \n");
-        $opcionEstado = readline("Ingrese una opcion: ");
-        switch ($opcionEstado) {
-            case 1:
-                $estado = "En Preparacion";
-                break 2;
-            case 2:
-                $estado = "En Camino";
-                break 2;
-            case 3:
-                $estado = "Entregado";
-                break 2;
-            default:
-                echo ("Opcion no valida \n");
+    if ($pedido !== null) {
+        $estado="";
+        $opcionEstado = true;
+        while ($opcionEstado != 0) {
+            echo ("============= Estado Del Pedido ============= \n");
+            echo ("1- En Preparacion \n");
+            echo ("2- En Camino \n");
+            echo ("3- Entregado \n");
+            $opcionEstado = readline("Ingrese una opcion: ");
+            switch ($opcionEstado) {
+                case 1:
+                    $estado = "En Preparacion";
+                    break 2;
+                case 2:
+                    $estado = "En Camino";
+                    break 2;
+                case 3:
+                    $estado = "Entregado";
+                    break 2;
+                default:
+                    echo ("Opcion no valida \n");
+            }
         }
+        $casaDeComidas->modificarEstadoPedido($pedido, $estado);
+        menuPedidos($casaDeComidas);
     }
-    $casaDeComidas->modificarEstadoPedido($pedido, $estado);
 }
 
 function listarPedidos($casaDeComidas) {
@@ -193,21 +195,28 @@ function listarPedidos($casaDeComidas) {
 function listarPedidoPorEstado($casaDeComidas, $estado) {
     $todos = Pedido::todosPedidos();
 
-    echo "ID Pedido |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |   Estado   |\n";
-    foreach ($todos as $pedido) {
-        $id_cliente = $pedido->id_cliente;
-        $cliente = $casaDeComidas->buscarCliente($id_cliente);
-        if ($pedido->estado == $estado) {
-            echo ($pedido->id_pedido);    echo ('             '); 
-            echo ($cliente->getNombre());echo ('       ');
-            echo ($cliente->getApellido());echo ('     ');
-            echo ($pedido->fecha);echo ('      ');
-            echo ($pedido->forma_de_pago);echo ('        ');
-            echo ($pedido->total);echo ('      ');
-            echo ($pedido->estado);
-            echo (PHP_EOL);  
-        }       
+    if(!$casaDeComidas->pedidosEnEstado($estado)){
+        echo ("No hay pedidos "), $estado;
+        estadoPedidos($casaDeComidas);
+    }else{
+        echo "ID Pedido |   Nombre   |   Apellido   |    Fecha     | Forma de Pago |  Total  |   Estado   |\n";
+        foreach ($todos as $pedido) {
+            $id_cliente = $pedido->id_cliente;
+            $cliente = $casaDeComidas->buscarCliente($id_cliente);
+            if ($pedido->estado == $estado) {
+                echo ($pedido->id_pedido);    echo ('             '); 
+                echo ($cliente->getNombre());echo ('       ');
+                echo ($cliente->getApellido());echo ('     ');
+                echo ($pedido->fecha);echo ('      ');
+                echo ($pedido->forma_de_pago);echo ('        ');
+                echo ($pedido->total);echo ('      ');
+                echo ($pedido->estado);
+                echo (PHP_EOL);  
+            }       
+        }
     }
+
+
 }
 function listarDetallePedido($id_pedido, $casaDeComidas) {
     $todos = DetallePedido::todosDetallePedido($id_pedido);

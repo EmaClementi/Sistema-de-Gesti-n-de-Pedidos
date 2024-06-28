@@ -165,6 +165,14 @@ class CasaDeComidas {
         $pedido->setEstadoPedido($estado);
         $pedido->updateEstado();
     }
+    public function pedidosEnEstado($estado) {
+        foreach ($this->pedidos as $pedido) {
+            if ($pedido->getEstadoPedido() == $estado) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
 
